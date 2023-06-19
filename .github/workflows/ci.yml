@@ -15,8 +15,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp: ['23.2', '24.3.4.12', '25.3.2.2', '26.0.1']
+        otp: ['23.3.4.19', '24.3.4.12', '25.3.2.2', '26.0.1']
         elixir: ['1.11.4','1.8.2', '1.9.4', '1.14.5','1.15.0-rc.2']
+        exclude:
+          - otp: '24.3.4.12'
+            elixir: '1.8.2'
+          - otp: '24.3.4.12'
+            elixir: '1.9.4'
+          - otp: '25.3.2.2'
+            elixir: '1.11.4'
+          - otp: '25.3.2.2'
+            elixir: '1.8.2'
+          - otp: '25.3.2.2'
+            elixir: '1.9.4'
+          - otp: '26.0.1'
+            elixir: '1.11.4'
+          - otp: '26.0.1'
+            elixir: '1.8.2'
+          - otp: '26.0.1'
+            elixir: '1.9.4'
     steps:
       - uses: actions/checkout@v2
 
