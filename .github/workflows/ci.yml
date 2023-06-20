@@ -1,11 +1,9 @@
 name: CI
-
 on:
   pull_request:
   push:
     branches:
       - master
-
 jobs:
   test:
     runs-on: ubuntu-20.04
@@ -15,61 +13,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp: ['23.3.4.19', '24.3.4.12', '25.3.2.2', '26.0.1']
         elixir: ['1.11.4','1.8.2', '1.9.4', '1.14.5','1.15.0-rc.2']
-        exclude:
-          - otp: '23.3.4.19'
-            elixir: '1.8.2'
-          - otp: '23.3.4.19'
-            elixir: '1.9.4'
-          - otp: '23.3.4.19'
-            elixir: '1.15.0-rc.2'
-          - otp: '23.3.4.19'
-            elixir: '1.11.4'
-          - otp: '23.3.4.19'
-            elixir: '1.14.5'
-          - otp: '23.3.4.19'
-            elixir: '1.15.0-rc.2'
-          - otp: '24.3.4.12'
-            elixir: '1.8.2'
-          - otp: '24.3.4.12'
-            elixir: '1.9.4'
-          - otp: '25.3.2.2'
-            elixir: '1.11.4'
-          - otp: '25.3.2.2'
-            elixir: '1.8.2'
-          - otp: '25.3.2.2'
-            elixir: '1.9.4'
-          - otp: '26.0.1'
-            elixir: '1.11.4'
-          - otp: '26.0.1'
-            elixir: '1.8.2'
-          - otp: '26.0.1'
-            elixir: '1.9.4'
-          - otp: '26.0.1' 
-            elixir: '1.15.0-rc.2'
-
+        otp: ['23.3.4.19', '24.3.4.12', '25.3.2.2', '26.0.1']
+        include:
+          - elixir: '1.11.4'  
+            otp: '23.3.4.19'
+          - elixir: '1.8.2'
+            otp: '24.3.4.12'
+          - elixir: '1.9.4'
+            otp: '24.3.4.12' 
+          - elixir: '1.8.2'
+            otp: '25.3.2.2'
+          - elixir: '1.8.2'
+            otp: '26.0.1'
     steps:
       - uses: actions/checkout@v2
-
       - uses: erlef/setup-elixir@v1
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
           version-type: strict
-
       - name: Install Dependencies
         run: mix deps.get --only test
-
       - run: mix format --check-formatted
         if: ${{ matrix.lint }}
-
       - run: mix deps.get && mix deps.unlock --check-unused
         if: ${{ matrix.lint }}
-
       - run: mix deps.compile
-
       - run: mix compile --warnings-as-errors
         if: ${{ matrix.lint }}
-
       - run: mix test
